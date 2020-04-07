@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Dimensions,
@@ -89,7 +89,7 @@ const App = () => {
       animValues[`${i}`] = new Animated.Value(1);
     });
 
-  const onSwipeValueChange = (swipeData: SwipeValue) => {
+  const handleArchive = (swipeData: SwipeValue) => {
     const {key, value} = swipeData;
     console.log(swipeData);
     if (value >= Dimensions.get('window').width / 2 && !animationIsRunning) {
@@ -105,13 +105,12 @@ const App = () => {
         newData[itemIndex] = fruit;
         setFruits(newData);
         animationIsRunning = false;
-        console.log(`${key} arşivlendi`);
-        console.log(newData);
+        console.log(`${key} sepete atıldı`);
       });
     }
   };
 
-  const handleDanger = (item: any) => {
+  const handleDelete = (item: any) => {
     Alert.alert(
       `${item.name} silinecek`,
       `${item.name} meyvesini silmek istediğinize emin misiniz?`,
@@ -136,7 +135,7 @@ const App = () => {
     );
   };
 
-  const handleInfo = (fruit: any) => {
+  const handleDuplicate = (fruit: any) => {
     const newFruits = [...fruits];
     const numOfSameFruit = fruits.reduce(
       (i, v) => (v.name.startsWith(fruit.name) ? ++i : i),
@@ -154,7 +153,7 @@ const App = () => {
   const handleUnarchive = () => {
     const archivedCount = fruits.filter((v) => v.isArchived).length;
     Alert.alert(
-      'Arşivden çıkarma',
+      'Sepetten çıkarma',
       `${archivedCount} adet meyveyi sepetten çıkarmak istediğinize emin misiniz?`,
       [
         {
@@ -208,12 +207,12 @@ const App = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.backRightBtn, styles.infoBtn]}
-        onPress={() => handleInfo(item)}>
+        onPress={() => handleDuplicate(item)}>
         <Image source={require('./img/copy.png')} style={styles.infoImage} />
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.backRightBtn, styles.dangerBtn]}
-        onPress={() => handleDanger(item)}>
+        onPress={() => handleDelete(item)}>
         <Image source={require('./img/bin.png')} style={styles.dangerImage} />
       </TouchableOpacity>
     </View>
@@ -226,7 +225,7 @@ const App = () => {
         data={fruits.filter((fruit) => !fruit.isArchived)}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
-        onSwipeValueChange={onSwipeValueChange}
+        onSwipeValueChange={handleArchive}
         keyExtractor={(item) => item.key}
         rightOpenValue={-openWidth}
         stopLeftSwipe={Dimensions.get('window').width / 2}
